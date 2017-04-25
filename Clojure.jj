@@ -31,10 +31,85 @@ public class ClojureParser {
 
 PARSER_END(ClojureParser)
 
-SKIP:  { " " | "\t" | "\n" | "\r"                    }
-TOKEN: { "(" | ")" | "+" | "*" | <NUM: (["0"-"9"])+> }
 
-void S(): {} { E() <EOF>           }
-void E(): {} { T() ("+" T())*      }
-void T(): {} { F() ("*" F())*      }
-void F(): {} { <NUM> | "(" E() ")" }
+
+/* COMMENTS */
+
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: ";" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+SKIP:  { " " | "\t" | "\n" | "\r" | ","              }
+
+/* BRACKETS */
+
+TOKEN: {
+  // <BRACKET: <LPAR> | <RPAR> | <LSQU> | <RSQU> | <LCUR> | <RCUR> >
+  <LPAR: "(">
+  | <RPAR: ")">
+  | <LSQU: "[">
+  | <RSQU: "]">
+  | <LCUR: "{">
+  | <RCUR: "}">
+  }
+
+
+/* LITERALS */
+TOKEN: {
+  <NUM: <RATIO> | <INT> | <DOUBLE> >
+  | <RATIO: <INT> "/" <INT> >
+  | <DOUBLE: (<DIGIT>)+ "." (<DIGIT>)* ("e" (<DIGIT>)+)? >
+  | <INT: (<DIGIT>)+ ("r" (<DIGIT>)+)? ("n" | "l" | "L" | "N")?>
+  | <NIL: "nil">
+  | <STR: "\"" (~["\""])* "\"">
+  | <BOOLEAN: "true" | "false">
+  | <CHARACTER: "\\" (<LETTER>
+                     | ("u" <DIGIT><DIGIT><DIGIT><DIGIT>)
+                     | ("o" <DIGIT><DIGIT><DIGIT>)
+                     | "newline"
+                     | "space"
+                     | "tab"
+                     | "formfeed"
+                     | "backspace"
+                     | "return") >
+  | <KEYWORD: ":" (":")? ((<DIGIT>)* <NS> "/")? (<DIGIT>)* <NAME> >
+}
+
+TOKEN: {
+  <SYMBOL: <NAME> | <NS> "/" <NAME> | <INTEROP> >
+  | <INTEROP: (("." | ".-") <NAME> | "." )>
+  | <NS: <NAME> ("." <NAME>)*>
+  | <NAME: (<LETTER> | <CHAR>) (<DIGIT> | <LETTER> | <CHAR>)* >
+  | <LETTER: ["a"-"z", "A"-"Z"]>
+  | <CHAR: ["*", "+", "!", "-", "_", "\'", "?", "="] >
+  | <DIGIT: ["0"-"9"]>
+}
+
+void S(): {} { forms() <EOF> }
+
+void forms(): {} { (form() { ++forms; })* }
+void form(): {} {
+  literal() { literals++; }
+  | symbol()
+  | list()
+  | vector()
+  | set()
+  | map()
+}
+
+void list(): {} { <LPAR> forms() <RPAR> { ++lists; } }
+void vector(): {} { <LSQU> forms() <RSQU> { ++vectors; } }
+void set(): {} { "#" <LCUR> forms() <RCUR> { ++sets; } }
+void map(): {} { <LCUR> (form() form())* <RCUR> { ++maps; } }
+
+void symbol(): {}
+{
+  <SYMBOL>
+  { ++symbols; }
+}
+
+void literal(): {}
+{
+  <KEYWORD> { ++keywords; } | <CHARACTER> | <NUM> | <NIL> | <STR>
+}
