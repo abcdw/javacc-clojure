@@ -14,18 +14,32 @@ public class ClojureParser {
     static int maps = 0;
     static int sets = 0;
     static int nestiness = 0;
+    static int mxnestiness = 0;
+    static int functions = 0;
+    static int pfunctions = 0;
+    static int macros = 0;
 
     public static void main(String[] args) {
         try {
             new ClojureParser(new java.io.InputStreamReader(System.in)).S();
             System.out.println("Syntax is okay");
             System.out.println(
-                               "forms: " + forms + "\n" +
-                               "keywords: " + keywords + "\n" +
-                               "lists: " + lists + "\n" +
-                               "vectors: " + vectors + "\n" +
-                               "symbols: " + symbols + "\n" +
-                               "literals: " + literals + "\n"
+                               "|===============Forms==================\n" +
+                               "|forms: " + forms + "\n" +
+                               "|symbols: " + symbols + "\n" +
+                               "|literals: " + literals + "\n" +
+                               "|keywords: " + keywords + "\n" +
+                               "|maximum form nestiness: " + mxnestiness + "\n" +
+                               "|===============Collections============\n" +
+                               "|lists: " + lists + "\n" +
+                               "|vectors: " + vectors + "\n" +
+                               "|maps: " + maps + "\n" +
+                               "|sets: " + sets + "\n" +
+                               "|===============Definitions============\n" +
+                               "|public function defenitions: " + functions + "\n" +
+                               "|private function defenitions: " + pfunctions + "\n" +
+                               "|macro definitions: " + macros + "\n" +
+                               ""
                                );
         } catch (Throwable e) {
             System.out.println("Syntax check failed: " + e.getMessage());
@@ -92,7 +106,13 @@ TOKEN: {
 
 void S(): {} { forms() <EOF> }
 
-void forms(): {} { (form() { ++forms; })* }
+void forms(): {} {
+  (form() {
+    ++forms;
+    if (mxnestiness < nestiness)
+      mxnestiness = nestiness;
+  })*
+}
 void form(): {} {
   literal() { literals++; }
   | symbol()
@@ -103,25 +123,41 @@ void form(): {} {
   | reader_macro()
 }
 
-void list(): {} { <LPAR> forms() <RPAR> { ++lists; } }
+void list(): {++nestiness;} {
+  <LPAR> forms() <RPAR> {
+    ++lists;
+    --nestiness;
+  }
+}
+
 void vector(): {} { <LSQU> forms() <RSQU> { ++vectors; } }
 void set(): {} { "#" <LCUR> forms() <RCUR> { ++sets; } }
 void map(): {} { <LCUR> (form() form())* <RCUR> { ++maps; } }
 
-void symbol(): {} { <SYMBOL> { ++symbols; } }
+void symbol(): {Token t;} {
+  t=<SYMBOL> {
+    ++symbols;
+    switch (t.image) {
+      case "defn": ++functions; break;
+      case "defn-": ++pfunctions; break;
+      case "defmacro": ++macros; break;
+      default: break;
+    }
+  }
+}
 void literal(): {} { <KEYWORD> { ++keywords; } | <CHARACTER> | <NUM> | <NIL> | <STR> }
 
 
 /* READER MACROS */
 
-void reader_macro(): {} { quote() | lambda() | regex() | var_quote() | discard() | tag()}
-
+void reader_macro(): {} { quote() | lambda() | regex() | var_quote() | discard() | tag() | meta()}
 void quote(): {} { ("\'" | "`" | "~" | "~@" | "@" ) form() }
 void lambda(): {} { "#(" forms() ")" }
 void regex(): {} { "#" <STR> }
 void var_quote(): {} { "#\'" symbol() }
 void discard(): {} { "#_" form() }
 void tag(): {} { "^" form() form() }
+void meta(): {} {"#?" (map() form() | form()) }
 
 
 // void deref(): {} { "@" form() }
