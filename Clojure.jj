@@ -1,12 +1,29 @@
 PARSER_BEGIN(ClojureParser)
 
 public class ClojureParser {
+    static int forms = 0;
+    static int literals = 0;
+    static int keywords = 0;
+    static int symbols = 0;
+    static int lists = 0;
+    static int vectors = 0;
+    static int maps = 0;
+    static int sets = 0;
+    static int nestiness = 0;
+
     public static void main(String[] args) {
         try {
             new ClojureParser(new java.io.InputStreamReader(System.in)).S();
             System.out.println("Syntax is okay");
+            System.out.println(
+                               "forms: " + forms + "\n" +
+                               "keywords: " + keywords + "\n" +
+                               "lists: " + lists + "\n" +
+                               "vectors: " + vectors + "\n" +
+                               "symbols: " + symbols + "\n" +
+                               "literals: " + literals + "\n"
+                               );
         } catch (Throwable e) {
-            // Catching Throwable is ugly but JavaCC throws Error objects!
             System.out.println("Syntax check failed: " + e.getMessage());
         }
     }
