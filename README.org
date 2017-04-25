@@ -1,2 +1,66 @@
-# javacc-clojure
+* JAVACC-CLOJURE
 Javacc grammar for parsing clojure
+
+** Goals of the project
+To write LL(2)-grammar of clojure programming language for javacc to gather some
+metrics from the code to assess its quality or just understand something about the project.
+
+** Background
+JavaCC is a parser generator, which accepts ~.jj~ file and produce java classes.
+Additional information about javacc can be found on [[https://javacc.org/doc][official]] site.
+
+Clojure is a LISP dialect with extended syntax.
+https://clojure.org/reference/reader
+
+** Metrics
+Metrics from OO world doesn't conform our needs. That is why I choose few pretty
+random metrics, which can show something interesting about source code.
+Explanation what can be gathered and how it can be interpreted provided in Usage
+section.
+
+** Usage
+
+To generate report build parser, get all source code to one file and run parser
+on it.
+#+BEGIN_SRC bash
+./compile.sh
+find /path/to/project -name 'filename.clj' | xargs cat > combined.clj
+cat combined.clj | java -cp target/ ClojureParser
+#+END_SRC
+
+Results for [[https://github.com/juxt/yada][yada]] project looks like:
+#+BEGIN_SRC bash
+|===============Forms==================
+|forms: 37693
+|symbols: 18778
+|literals: 9720
+|keywords: 6092
+|maximum form nestiness: 15
+|===============Collections============
+|lists: 9411
+|vectors: 3677
+|maps: 1973
+|sets: 144
+|===============Definitions============
+|public function defenitions: 267
+|private function defenitions: 40
+|macro definitions: 7
+|multimethods defs: 11
+|multimethods implementations: 63
+#+END_SRC
+
+- Nestiness a little bit high, but still ok for such a big project.
+- Pretty high number(1/7 of all functions) of private function definitions shows that code
+maybe clean and nses doesn't provide redundant API for external developers, who
+uses this library.
+- Very low number of macros usage shows that code probably straightforward and
+  doesn't provide unnecessary complexity
+- Information of multimethods tell us that developers at least using
+  polymorphism features, for each dispatching we have around 6 variants of
+  functions and that probably mean that multimethods used accurately. Not so
+  much and not so few cases covered each multimethod.
+
+** Conclusion
+It is very pet project and probably shouldn't be used as a source of trust, but
+I tried to implement grammar for javacc as close as possible to ~Clojure~ reader
+[[https://clojure.org/reference/reader][reference]]. Fill free to ask questions, make pull request or submit issues.
