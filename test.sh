@@ -1,1 +1,1 @@
-cat sample.clj | java -cp target/ ClojureParser
+cat sample3.clj | java -cp target/ ClojureParser
