@@ -1,3 +1,7 @@
+options {
+  LOOKAHEAD = 2;
+}
+
 PARSER_BEGIN(ClojureParser)
 
 public class ClojureParser {
