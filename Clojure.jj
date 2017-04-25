@@ -157,7 +157,7 @@ void regex(): {} { "#" <STR> }
 void var_quote(): {} { "#\'" symbol() }
 void discard(): {} { "#_" form() }
 void tag(): {} { "^" form() form() }
-void meta(): {} {"#?" (map() form() | form()) }
+void meta(): {} {"#^" (map() form() | form()) }
 
 
 // void deref(): {} { "@" form() }
