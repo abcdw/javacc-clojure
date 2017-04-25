@@ -1,9 +1,9 @@
-PARSER_BEGIN(SyntaxChecker)
+PARSER_BEGIN(ClojureParser)
 
-public class SyntaxChecker {
+public class ClojureParser {
     public static void main(String[] args) {
         try {
-            new SyntaxChecker(new java.io.StringReader(args[0])).S();
+            new ClojureParser(new java.io.InputStreamReader(System.in)).S();
             System.out.println("Syntax is okay");
         } catch (Throwable e) {
             // Catching Throwable is ugly but JavaCC throws Error objects!
@@ -12,7 +12,7 @@ public class SyntaxChecker {
     }
 }
 
-PARSER_END(SyntaxChecker)
+PARSER_END(ClojureParser)
 
 SKIP:  { " " | "\t" | "\n" | "\r"                    }
 TOKEN: { "(" | ")" | "+" | "*" | <NUM: (["0"-"9"])+> }
