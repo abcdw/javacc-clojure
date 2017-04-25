@@ -19,6 +19,8 @@ public class ClojureParser {
     static int functions = 0;
     static int pfunctions = 0;
     static int macros = 0;
+    static int multis = 0;
+    static int methods = 0;
 
     public static void main(String[] args) {
         try {
@@ -40,6 +42,8 @@ public class ClojureParser {
                                "|public function defenitions: " + functions + "\n" +
                                "|private function defenitions: " + pfunctions + "\n" +
                                "|macro definitions: " + macros + "\n" +
+                               "|multimethods defs: " + multis + "\n" +
+                               "|multimethods implementations: " + methods + "\n" +
                                ""
                                );
         } catch (Throwable e) {
@@ -139,6 +143,8 @@ void symbol(): {Token t;} {
   t=<SYMBOL> {
     ++symbols;
     switch (t.image) {
+      case "defmulti": ++multis; break;
+      case "defmethod": ++methods; break;
       case "defn": ++functions; break;
       case "defn-": ++pfunctions; break;
       case "defmacro": ++macros; break;

@@ -14,6 +14,8 @@ public class ClojureParser implements ClojureParserConstants {
     static int functions = 0;
     static int pfunctions = 0;
     static int macros = 0;
+    static int multis = 0;
+    static int methods = 0;
 
     public static void main(String[] args) {
         try {
@@ -35,6 +37,8 @@ public class ClojureParser implements ClojureParserConstants {
                                "|public function defenitions: " + functions + "\u005cn" +
                                "|private function defenitions: " + pfunctions + "\u005cn" +
                                "|macro definitions: " + macros + "\u005cn" +
+                               "|multimethods defs: " + multis + "\u005cn" +
+                               "|multimethods implementations: " + methods + "\u005cn" +
                                ""
                                );
         } catch (Throwable e) {
@@ -127,6 +131,8 @@ literals++;
     t = jj_consume_token(SYMBOL);
 ++symbols;
     switch (t.image) {
+      case "defmulti": ++multis; break;
+      case "defmethod": ++methods; break;
       case "defn": ++functions; break;
       case "defn-": ++pfunctions; break;
       case "defmacro": ++macros; break;
@@ -467,18 +473,6 @@ void reader_macro() throws ParseException {
     finally { jj_save(28, xla); }
   }
 
-  static private boolean jj_3_25()
- {
-    if (jj_scan_token(32)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_28()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
   static private boolean jj_3_24()
  {
     if (jj_scan_token(31)) return true;
@@ -667,15 +661,15 @@ void reader_macro() throws ParseException {
     return false;
   }
 
-  static private boolean jj_3R_5()
- {
-    if (jj_scan_token(SYMBOL)) return true;
-    return false;
-  }
-
   static private boolean jj_3_15()
  {
     if (jj_scan_token(BOOLEAN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_5()
+ {
+    if (jj_scan_token(SYMBOL)) return true;
     return false;
   }
 
@@ -685,17 +679,17 @@ void reader_macro() throws ParseException {
     return false;
   }
 
+  static private boolean jj_3_20()
+ {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_6()
  {
     if (jj_scan_token(LPAR)) return true;
     if (jj_3R_18()) return true;
     if (jj_scan_token(RPAR)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_20()
- {
-    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -711,6 +705,12 @@ void reader_macro() throws ParseException {
     return false;
   }
 
+  static private boolean jj_3_13()
+ {
+    if (jj_scan_token(NIL)) return true;
+    return false;
+  }
+
   static private boolean jj_3_6()
  {
     if (jj_3R_8()) return true;
@@ -720,12 +720,6 @@ void reader_macro() throws ParseException {
   static private boolean jj_3_5()
  {
     if (jj_3R_7()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_13()
- {
-    if (jj_scan_token(NIL)) return true;
     return false;
   }
 
@@ -834,6 +828,18 @@ void reader_macro() throws ParseException {
   static private boolean jj_3_17()
  {
     if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_25()
+ {
+    if (jj_scan_token(32)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_28()
+ {
+    if (jj_3R_9()) return true;
     return false;
   }
 
