@@ -1,5 +1,13 @@
+((("test")))
 
-(def sample-str "Hello str")
+[nil nil]
+#{nil "test"}
 
-(defn sample-fn [a b]
-  (str sample-str (+ a b)))
+[\a \newline \u2354 2/4 35.07e5 :keyw :aoeu/eto]
+
+(. thess cho-ec?)
+(.ou)
+
+
+;; ["test"]
+;; some comment here
