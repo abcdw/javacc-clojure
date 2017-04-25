@@ -99,7 +99,7 @@ public interface ClojureParserConstants {
     "\"#\\\'\"",
     "\"#_\"",
     "\"^\"",
-    "\"#?\"",
+    "\"#^\"",
   };
 
 }

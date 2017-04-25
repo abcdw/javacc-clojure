@@ -1,5 +1,6 @@
 options {
   LOOKAHEAD = 2;
+  UNICODE_INPUT = true;
 }
 
 PARSER_BEGIN(ClojureParser)
@@ -98,9 +99,9 @@ TOKEN: {
   <SYMBOL: <NAME> | <NS> | <NS> "/" <NAME> | <INTEROP> >
   | <INTEROP: (("." | ".-") <NAME> | "." )>
   | <NS: <NAME> ("." <NAME>)*>
-  | <NAME: (<LETTER> | <CHAR>) (<DIGIT> | <LETTER> | <CHAR> | "#" )* >
+  | <NAME: (<LETTER> | <CHAR>) (<DIGIT> | <LETTER> | <CHAR> | "#" | "'" )* >
   | <LETTER: ["a"-"z", "A"-"Z"]>
-  | <CHAR: ["*", "+", "!", "-", "_", "?", "=", "%", "&", ">", "<"] > // maybe some other chars
+  | <CHAR: ["*", "+", "!", "-", "_", "?", "=", "%", "&", ">", "<", "$"] > // maybe some other chars
   | <DIGIT: ["0"-"9"]>
 }
 
