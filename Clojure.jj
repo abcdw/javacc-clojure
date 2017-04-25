@@ -145,7 +145,7 @@ void symbol(): {Token t;} {
     }
   }
 }
-void literal(): {} { <KEYWORD> { ++keywords; } | <CHARACTER> | <NUM> | <NIL> | <STR> }
+void literal(): {} { <KEYWORD> { ++keywords; } | <CHARACTER> | <NUM> | <NIL> | <STR> | <BOOLEAN> }
 
 
 /* READER MACROS */

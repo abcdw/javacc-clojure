@@ -1,3 +1,7 @@
+(OPTIONS "/my" []
+         :no-doc true
+         (resp/not-found))
+
 ((("test")))
 
 [nil nil]
