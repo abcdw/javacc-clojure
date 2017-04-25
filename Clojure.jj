@@ -66,9 +66,9 @@ TOKEN: {
   | <DOUBLE: (<DIGIT>)+ "." (<DIGIT>)* ("e" (<DIGIT>)+)? >
   | <INT: (<DIGIT>)+ ("r" (<DIGIT>)+)? ("n" | "l" | "L" | "N")?>
   | <NIL: "nil">
-  | <STR: "\"" (~["\""])* "\"">
+  | <STR: "\"" (~["\""] | "\\" "\"")* "\"">
   | <BOOLEAN: "true" | "false">
-  | <CHARACTER: "\\" (<LETTER>
+  | <CHARACTER: "\\" (~[" "]
                      | ("u" <DIGIT><DIGIT><DIGIT><DIGIT>)
                      | ("o" <DIGIT><DIGIT><DIGIT>)
                      | "newline"
@@ -81,12 +81,12 @@ TOKEN: {
 }
 
 TOKEN: {
-  <SYMBOL: <NAME> | <NS> "/" <NAME> | <INTEROP> >
+  <SYMBOL: <NAME> | <NS> | <NS> "/" <NAME> | <INTEROP> >
   | <INTEROP: (("." | ".-") <NAME> | "." )>
   | <NS: <NAME> ("." <NAME>)*>
-  | <NAME: (<LETTER> | <CHAR>) (<DIGIT> | <LETTER> | <CHAR>)* >
+  | <NAME: (<LETTER> | <CHAR>) (<DIGIT> | <LETTER> | <CHAR> | "#" )* >
   | <LETTER: ["a"-"z", "A"-"Z"]>
-  | <CHAR: ["*", "+", "!", "-", "_", "\'", "?", "="] >
+  | <CHAR: ["*", "+", "!", "-", "_", "?", "=", "%", "&", ">", "<"] > // maybe some other chars
   | <DIGIT: ["0"-"9"]>
 }
 
