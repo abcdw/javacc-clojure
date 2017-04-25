@@ -100,6 +100,7 @@ void form(): {} {
   | vector()
   | set()
   | map()
+  | reader_macro()
 }
 
 void list(): {} { <LPAR> forms() <RPAR> { ++lists; } }
@@ -107,13 +108,21 @@ void vector(): {} { <LSQU> forms() <RSQU> { ++vectors; } }
 void set(): {} { "#" <LCUR> forms() <RCUR> { ++sets; } }
 void map(): {} { <LCUR> (form() form())* <RCUR> { ++maps; } }
 
-void symbol(): {}
-{
-  <SYMBOL>
-  { ++symbols; }
-}
+void symbol(): {} { <SYMBOL> { ++symbols; } }
+void literal(): {} { <KEYWORD> { ++keywords; } | <CHARACTER> | <NUM> | <NIL> | <STR> }
 
-void literal(): {}
-{
-  <KEYWORD> { ++keywords; } | <CHARACTER> | <NUM> | <NIL> | <STR>
-}
+
+/* READER MACROS */
+
+void reader_macro(): {} { quote() | lambda() | regex() | var_quote() | discard() | tag()}
+
+void quote(): {} { ("\'" | "`" | "~" | "~@" | "@" ) form() }
+void lambda(): {} { "#(" forms() ")" }
+void regex(): {} { "#" <STR> }
+void var_quote(): {} { "#\'" symbol() }
+void discard(): {} { "#_" form() }
+void tag(): {} { "^" form() form() }
+
+
+// void deref(): {} { "@" form() }
+// void dispatch(): {} { "#" symbol() form() }
